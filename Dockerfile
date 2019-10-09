@@ -1,13 +1,10 @@
 FROM alpine:latest
 
-MAINTAINER colinwjd <wjdwjd@live.cn>
-
-RUN apk update \
-	&& apk add --no-cache --update aria2 darkhttpd \
-	&& mkdir -p aria2/conf aria2/conf-temp aria2/downloads aria-ng \
-	&& wget --no-check-certificate https://github.com/mayswind/AriaNg/releases/download/1.1.1/AriaNg-1.1.1.zip \
-	&& unzip AriaNg-1.1.1.zip -d aria-ng \
-	&& rm -rf AriaNg-1.1.1.zip
+MAINTAINER Kai Yuan <kent.yuan@gmail.com>
+ENV UID=33 GID=33 
+RUN apk -U upgrade \
+	&& apk add --no-cache --update su-exec aria2 darkhttpd \
+	&& mkdir -p aria2/conf aria2/conf-temp aria2/downloads aria-ng 
 
 COPY init.sh /aria2/init.sh
 COPY conf-temp /aria2/conf-temp

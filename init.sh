@@ -1,17 +1,34 @@
 #!/bin/sh
-if [ ! -f /aria2/conf/aria2.conf ]; then
-	cp /aria2/conf-temp/aria2.conf /aria2/conf/aria2.conf
-	if [ $SECRET ]; then
-		echo "rpc-secret=${SECRET}" >> /aria2/conf/aria2.conf
-	fi
+conf="/aria2/conf/aria2.conf"
+session="/aria2/conf/aria2.session"
+download="/aria2/downloads"
+ng_ver=$(wget --no-check-certificate -q -O - "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | sed '/"tag_name":/!d;s/[^0-9]*\([0-9][^"]*\)".*/\1/')
+
+echo "retrieving latest aria2-ng version ..."
+echo "installing aria2-ng ver: $ng_ver..."
+wget --no-check-certificate "https://github.com/mayswind/AriaNg/releases/download/$ng_ver/AriaNg-$ng_ver.zip"
+unzip "AriaNg-$ng_ver.zip" -d aria-ng 
+rm -rf "AriaNg-$ng_ver.zip"
+
+if [ ! -f "$conf" ]; then
+        cp /aria2/conf-temp/aria2.conf "$conf"
+        if [ "$SECRET" ]; then
+                echo "rpc-secret=$SECRET" >> "$conf"
+        fi
 fi
 if [ ! -f /aria2/conf/on-complete.sh ]; then
-	cp /aria2/conf-temp/on-complete.sh /aria2/conf/on-complete.sh
+        cp /aria2/conf-temp/on-complete.sh /aria2/conf/on-complete.sh
 fi
 
-chmod +x /aria2/conf/on-complete.sh
-touch /aria2/conf/aria2.session
+if [ ! -f "$session" ]; then
+        touch "$session"
+fi
 
+echo "setting permission for scripts and dirs..."
+chmod +x /aria2/conf/on-complete.sh
+chown -R "$UID":"$GID" /aria2
+echo "starting aria-ng on port 80.."
 darkhttpd /aria-ng --port 80 &
-darkhttpd /aria2/downloads --port 8080 &
-aria2c --conf-path=/aria2/conf/aria2.conf
+echo "starting downloaded http access on 8080..."
+darkhttpd "$download" --port 8080 &
+exec su-exec "$UID":"$GID" aria2c --conf-path=$conf
