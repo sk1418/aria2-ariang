@@ -1,22 +1,22 @@
-# Aria2-AriaNg
+# Aria2-AriaNg For Raspberry PI
 [![](https://images.microbadger.com/badges/version/colinwjd/aria2-ariang.svg)](https://microbadger.com/images/colinwjd/aria2-ariang "Get your own version badge on microbadger.com")
 [![](https://images.microbadger.com/badges/image/colinwjd/aria2-ariang.svg)](https://microbadger.com/images/colinwjd/aria2-ariang "Get your own image badge on microbadger.com")
 
 Aria2 with Aira-Ng web UI.
 
 ## Brief Introduction
-* Use Apline:latest as base image, full image only **18Mb**.
+* Use Apline:latest as base image, full image only **17Mb**.
 * You can edit aria2 config file out of the image.
 * Use Aria-Ng as aria2 web ui, it seems much more beautiful.
 * Use darkhttpd as http server, it's very small(Only 36K after complied) and easy to use.
-* Use user given `UID:GID` (or default 33:33) to start arai2, so that the downloaded files are not belong to `root`
+* Change downloaded files owner to the given `UID:GID` (or default 0:0 root)
 * Automatically install the latest version aria-ng
 
 ## Build
 ```
 git clone https://github.com/sk1418/aria2-ariang.git
 cd aria2-ariang
-docker build -t ak0818/aria2-ariang .
+docker build -t ak0818/aria2-ariang-pi.
 ```
 
 ## Install
@@ -40,6 +40,6 @@ docker run --name aria2-ariang \
 -p 6800:6800 -p 6880:80 -p 6888:8080 \
 -v /DOWNLOAD_DIR:/aria2/downloads \
 -v /CONFIG_DIR:/aria2/conf \
--e SECRET=YOUR_SECRET_CODE ak0818/aria2-ariang
+-e SECRET=YOUR_SECRET_CODE ak0818/aria2-ariang-pi
 ```
 After finished, open http://serverip:6880/ in your browser for visiting Aria-Ng home page, open http://serverip:6888/ to browser your downloads folder.

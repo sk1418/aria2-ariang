@@ -1,5 +1,3 @@
 #!/bin/sh
-echo [$(date)] "Download success."
-echo "Group Id: $1"
-echo "File Num: $2"
-echo "File Path: $3"
+echo "setting permission for downloaded files"
+chown -R "$UID":"$GID" /aria2/downloads > /dev/null 2>&1
